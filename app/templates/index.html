@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Retail Data Analysis</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: auto; }
+        .button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        .button:hover { background-color: #45a049; }
+        .plot { margin-top: 20px; }
+        img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Retail Data Analysis Dashboard</h1>
+        
+        <button class="button" onclick="processData()">Process Data</button>
+        <button class="button" onclick="generatePlots()">Generate Plots</button>
+        
+        <h2>Clustering Metrics</h2>
+        <pre id="metrics"></pre>
+        
+        <h2>Generated Plots</h2>
+        <div class="plot">
+            <h3>Monetary Value Distribution</h3>
+            <img src="" id="monetary_hist">
+        </div>
+        <div class="plot">
+            <h3>Frequency Distribution</h3>
+            <img src="" id="frequency_hist">
+        </div>
+        <div class="plot">
+            <h3>Recency Distribution</h3>
+            <img src="" id="recency_hist">
+        </div>
+        <div class="plot">
+            <h3>Monetary Value Boxplot</h3>
+            <img src="" id="monetary_box">
+        </div>
+        <div class="plot">
+            <h3>Frequency Boxplot</h3>
+            <img src="" id="frequency_box">
+        </div>
+        <div class="plot">
+            <h3>Recency Boxplot</h3>
+            <img src="" id="recency_box">
+        </div>
+    </div>
+    
+    <script>
+        function processData() {
+            fetch('/api/process')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('metrics').textContent = JSON.stringify(data, null, 2);
+                        alert('Data processed successfully!');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing data.');
+                });
+        }
+        
+        function generatePlots() {
+            fetch('/api/generate_plots')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update image sources
+                        const timestamp = new Date().getTime();
+                        document.getElementById('monetary_hist').src = `/api/visualization/hist/monetary_hist.png?${timestamp}`;
+                        document.getElementById('frequency_hist').src = `/api/visualization/hist/frequency_hist.png?${timestamp}`;
+                        document.getElementById('recency_hist').src = `/api/visualization/hist/recency_hist.png?${timestamp}`;
+                        document.getElementById('monetary_box').src = `/api/visualization/box/monetary_box.png?${timestamp}`;
+                        document.getElementById('frequency_box').src = `/api/visualization/box/frequency_box.png?${timestamp}`;
+                        document.getElementById('recency_box').src = `/api/visualization/box/recency_box.png?${timestamp}`;
+                        alert('Plots generated successfully!');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while generating plots.');
+                });
+        }
+    </script>
+</body> 
+</html>
